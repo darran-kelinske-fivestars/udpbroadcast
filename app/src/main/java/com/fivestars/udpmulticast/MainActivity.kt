@@ -9,14 +9,13 @@ import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private val buf: ByteArray = ByteArray(256)
-    private lateinit var socket: DatagramSocket
+    private val socket = DatagramSocket(4445)
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
@@ -27,12 +26,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val data = "data + ${Date()}".toByteArray()
 
         broadcast_button.setOnClickListener {
             broadcast("boop", InetAddress.getByName("255.255.255.255"))
         }
-            run()
+        run()
 
     }
 
@@ -54,7 +52,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun run() = GlobalScope.launch {
-        socket = DatagramSocket(4445)
 
         while (true) {
             var packet = DatagramPacket(buf, buf.size)
@@ -69,6 +66,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
             if (received.startsWith("boop")) {
                 broadcast("received message", InetAddress.getByName("255.255.255.255"))
             }
-        }
+        }s
     }
 }
